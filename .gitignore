@@ -35,3 +35,7 @@ coverage/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Local development docs & skills (not for repo)
+.claude/
+WORKFLOW.md
