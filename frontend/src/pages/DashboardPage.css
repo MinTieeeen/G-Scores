@@ -1,0 +1,16 @@
+.dashboard-page {
+  padding: 1rem 0;
+}
+
+.dashboard-page h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-page p {
+  color: var(--text-light);
+  padding: 2rem;
+  text-align: center;
+  background: var(--card-bg);
+  border-radius: 1rem;
+}
