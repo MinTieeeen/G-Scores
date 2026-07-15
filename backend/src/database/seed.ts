@@ -9,7 +9,11 @@ import { DataSource } from 'typeorm';
 import { parse } from 'csv-parse/sync';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as dotenv from 'dotenv';
 import { Score } from '../modules/scores/entities/score.entity';
+
+// Load .env file
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // Cấu hình database
 const AppDataSource = new DataSource({
@@ -19,8 +23,9 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'gscores',
+  entities: [Score],
   synchronize: true, // Auto create tables
-  logging: true,
+  logging: false,
 });
 
 // CSV file path
