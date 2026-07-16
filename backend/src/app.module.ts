@@ -13,16 +13,19 @@ import { RankingsModule } from './modules/rankings/rankings.module';
       envFilePath: '.env',
     }),
 
-    // Database configuration
+    // Database configuration - support both DATABASE_URL and individual vars
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      username: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'gscores',
+      url: process.env.DATABASE_URL,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true, // Set to false in production
+      synchronize: process.env.NODE_ENV !== 'production',
+      logging: process.env.NODE_ENV !== 'production',
+      ssl: process.env.DATABASE_URL ? true : false, // Enable SSL for Neon
     }),
 
     // Feature modules

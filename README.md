@@ -1,8 +1,34 @@
 # G-Scores
 
-This is the instruction for web developer intern assignment at [Golden Owl](https://goldenowl.asia).
+Ứng dụng web tra cứu điểm thi THPT 2024 Việt Nam.
 
-## Project Structure
+## 🚀 Quick Start
+
+### Development
+
+```bash
+# 1. Start Database
+docker-compose up -d
+
+# 2. Backend
+cd backend
+npm install
+npm run start:dev
+
+# 3. Frontend (terminal khác)
+cd frontend
+npm install
+npm run dev
+```
+
+### Deployment
+
+Xem [DEPLOY.md](DEPLOY.md) để biết cách deploy lên:
+- **Database**: Neon PostgreSQL
+- **Backend**: Railway (NestJS)
+- **Frontend**: Vercel (React)
+
+## 📁 Project Structure
 
 ```
 gscores/
@@ -10,58 +36,61 @@ gscores/
 │   ├── src/
 │   │   ├── modules/   # Feature modules (scores, statistics, rankings)
 │   │   ├── common/    # Shared decorators, interfaces, utils
-│   │   ├── config/    # Configuration
 │   │   └── database/  # Database setup & seeders
 │   └── package.json
 ├── frontend/          # React + Vite
 │   ├── src/
 │   │   ├── pages/     # Page components
-│   │   ├── components/# Reusable components
-│   │   ├── services/  # API services
 │   │   ├── hooks/     # Custom React hooks
+│   │   ├── services/  # API services
 │   │   └── types/     # TypeScript types
 │   └── package.json
-├── docker-compose.yml # PostgreSQL database
-└── dataset/           # Source data (CSV)
+├── docker-compose.yml  # PostgreSQL database (development)
+├── dataset/            # Source data (CSV)
+├── DEPLOY.md          # Deployment guide
+└── WORKFLOW.md        # Development workflow & business logic
 ```
 
-## Quick Start
-
-### 1. Start Database
-```bash
-docker-compose up -d
-```
-
-### 2. Backend Setup
-```bash
-cd backend
-npm install
-npm run start:dev
-```
-
-### 3. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 4. Seed Data (optional)
-```bash
-cd backend
-npm run seed
-```
-
-## API Endpoints
+## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/scores/:sbd` | Tra cứu điểm theo số báo danh |
-| GET | `/api/statistics` | Thống kê điểm theo 4 mức |
-| GET | `/api/rankings/top-10` | Top 10 học sinh nhóm A |
+| GET | `/api/statistics` | Thống kê điểm theo môn |
+| GET | `/api/rankings` | Top N học sinh nhóm A |
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend**: React 18, Vite, TypeScript, Recharts
-- **Backend**: NestJS, TypeORM, PostgreSQL
-- **Database**: PostgreSQL 16
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, Vite, TypeScript, Recharts, Lucide Icons |
+| Backend | NestJS, TypeORM, PostgreSQL |
+| Database | PostgreSQL 16 (dev: Docker, prod: Neon) |
+| CI/CD | GitHub Actions, Vercel, Railway |
+
+## 📋 Features
+
+- [x] Tra cứu điểm thi theo SBD
+- [x] Thống kê điểm theo môn (max, min, trung bình)
+- [x] Bảng xếp hạng Top N học sinh
+- [x] Biểu đồ trực quan (Bar chart, Line chart)
+- [x] Responsive UI
+- [x] Rate limiting (100 req/phút)
+- [x] Caching (5 phút cho statistics)
+
+## 📝 Development
+
+```bash
+# Run tests
+cd backend && npm test
+
+# Build frontend
+cd frontend && npm run build
+
+# Seed data (development)
+cd backend && npm run seed
+```
+
+## 👤 Author
+
+G-Scores - Tra cứu điểm thi THPT 2024

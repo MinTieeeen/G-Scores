@@ -1,6 +1,14 @@
 import { FormEvent, useState } from 'react';
 import { useScoreSearch } from '../hooks';
 import { SUBJECTS, type Score } from '../types';
+import {
+  Search,
+  FileText,
+  X,
+  AlertCircle,
+  Calculator,
+  CheckCircle,
+} from 'lucide-react';
 import './SearchPage.css';
 
 /**
@@ -34,16 +42,33 @@ function calcGroupDScore(score: Score): number {
 /**
  * ScoreCard: Hiển thị điểm 1 môn
  */
-function ScoreCard({ subject, score }: { subject: typeof SUBJECTS[0]; score: number | null }) {
+function ScoreCard({
+  subject,
+  score,
+}: {
+  subject: typeof SUBJECTS[0];
+  score: number | null;
+}) {
   const scoreNum = score ?? 0;
-  const bgColor = scoreNum >= 8 ? '#dcfce7' : scoreNum >= 5 ? '#fef9c3' : '#fee2e2';
+  let scoreClass = 'neutral';
+  if (score !== null) {
+    if (scoreNum >= 8) scoreClass = 'excellent';
+    else if (scoreNum >= 5) scoreClass = 'good';
+    else scoreClass = 'poor';
+  }
 
   return (
     <div className="score-card" style={{ borderLeftColor: subject.color }}>
-      <span className="score-label">{subject.name}</span>
-      <span className="score-value" style={{ backgroundColor: bgColor }}>
-        {formatScore(score)}
+      <span className="score-label">
+        {subject.name}
+        <span
+          className="score-badge"
+          style={{ background: subject.color }}
+        >
+          {subject.shortName}
+        </span>
       </span>
+      <span className={`score-value ${scoreClass}`}>{formatScore(score)}</span>
     </div>
   );
 }
@@ -74,40 +99,54 @@ export default function SearchPage() {
         <p>Nhập số báo danh để xem điểm thi của bạn</p>
       </div>
 
-      {/* Search Box */}
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Nhập số báo danh (VD: 01000001)"
-          value={inputSbd}
-          onChange={(e) => {
-            setInputSbd(e.target.value);
-            if (error) reset();
-          }}
-          onKeyDown={handleKeyDown}
-          className="search-input"
-          maxLength={8}
-          inputMode="numeric"
-          pattern="[0-9]*"
-        />
-        <button
-          className="search-btn"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? 'Đang tìm...' : 'Tra cứu'}
-        </button>
-        {inputSbd && (
-          <button className="clear-btn" onClick={() => { setInputSbd(''); reset(); }}>
-            ✕
+      {/* Search Container */}
+      <div className="search-container">
+        <form className="search-box" onSubmit={handleSubmit}>
+          <div className="search-input-wrapper">
+            <Search size={20} className="search-input-icon" />
+            <input
+              type="text"
+              placeholder="Nhập số báo danh (VD: 01000001)"
+              value={inputSbd}
+              onChange={(e) => {
+                setInputSbd(e.target.value);
+                if (error) reset();
+              }}
+              onKeyDown={handleKeyDown}
+              className="search-input"
+              maxLength={8}
+              inputMode="numeric"
+              pattern="[0-9]*"
+            />
+          </div>
+          <button
+            type="submit"
+            className="search-btn"
+            disabled={loading || !inputSbd.trim()}
+          >
+            <Search size={18} />
+            {loading ? 'Đang tìm...' : 'Tra cứu'}
           </button>
-        )}
+          {inputSbd && (
+            <button
+              type="button"
+              className="clear-btn"
+              onClick={() => {
+                setInputSbd('');
+                reset();
+              }}
+            >
+              <X size={16} />
+              Xóa
+            </button>
+          )}
+        </form>
       </div>
 
       {/* Error Message */}
       {error && (
         <div className="error-message">
-          <span className="error-icon">⚠️</span>
+          <AlertCircle size={20} className="error-icon" />
           {error}
         </div>
       )}
@@ -125,41 +164,65 @@ export default function SearchPage() {
         <div className="result-card">
           {/* Header */}
           <div className="result-header">
-            <h3>Kết quả tra cứu</h3>
-            <span className="sbd-badge">SBD: {score.sbd}</span>
+            <div className="result-header-content">
+              <div className="result-header-icon">
+                <CheckCircle size={24} />
+              </div>
+              <h3>Kết quả tra cứu</h3>
+            </div>
+            <div className="sbd-badge">
+              <span>SBD:</span>
+              <strong>{score.sbd}</strong>
+            </div>
           </div>
 
           {/* Score Grid */}
-          <div className="score-grid">
-            {SUBJECTS.map((subject) => (
-              <ScoreCard
-                key={subject.key}
-                subject={subject}
-                score={score[subject.key]}
-              />
-            ))}
+          <div className="score-section">
+            <h4>
+              <FileText size={18} />
+              Điểm các môn thi
+            </h4>
+            <div className="score-grid">
+              {SUBJECTS.map((subject) => (
+                <ScoreCard
+                  key={subject.key}
+                  subject={subject}
+                  score={score[subject.key]}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Group Scores */}
           <div className="group-scores">
-            <h4>Tổng hợp điểm</h4>
+            <h4>
+              <Calculator size={18} />
+              Tổng hợp điểm theo khối
+            </h4>
             <div className="group-grid">
               <div className="group-item">
                 <span className="group-label">Khối A</span>
-                <span className="group-value">A00 (Toán, Lý, Hóa)</span>
-                <span className="group-score">{calcGroupAScore(score).toFixed(2)}</span>
+                <span className="group-value">Toán + Lý + Hóa</span>
+                <span className="group-score">
+                  {calcGroupAScore(score).toFixed(2)}
+                </span>
               </div>
               <div className="group-item">
                 <span className="group-label">Khối D</span>
-                <span className="group-value">D01 (Toán, Văn, NN)</span>
-                <span className="group-score">{calcGroupDScore(score).toFixed(2)}</span>
+                <span className="group-value">Toán + Văn + Ngoại ngữ</span>
+                <span className="group-score">
+                  {calcGroupDScore(score).toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Footer */}
           <div className="result-footer">
-            <p>📌 Điểm thi THPT Quốc gia 2024 - Kỳ thi ngày 27-28/06/2024</p>
+            <p>
+              <FileText size={14} />
+              Điểm thi THPT Quốc gia 2024 - Kỳ thi ngày 27-28/06/2024
+            </p>
           </div>
         </div>
       )}
@@ -167,7 +230,9 @@ export default function SearchPage() {
       {/* Empty State */}
       {!score && !loading && !error && (
         <div className="empty-state">
-          <span className="empty-icon">🔍</span>
+          <div className="empty-icon">
+            <Search size={36} />
+          </div>
           <p>Nhập số báo danh để tra cứu điểm thi của bạn</p>
         </div>
       )}

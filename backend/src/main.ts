@@ -9,9 +9,21 @@ async function bootstrap() {
   // Global prefix for API routes
   app.setGlobalPrefix('api');
 
-  // Enable CORS for frontend
+  // Enable CORS for frontend (support local dev + production)
+  const allowedOrigins: (string | RegExp)[] = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ];
+
+  // Add production frontend URL if set
+  if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+  }
+
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: allowedOrigins,
     credentials: true,
   });
 
