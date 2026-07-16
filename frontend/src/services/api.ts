@@ -3,7 +3,7 @@
  * Giao tiếp với NestJS Backend
  */
 
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from "axios";
 import type {
   ScoreResponse,
   ScoreQuery,
@@ -11,17 +11,18 @@ import type {
   RankingsResponse,
   RankingsQuery,
   ApiError,
-} from '../types';
+} from "../types";
 
 // API Base URL - đọc từ env hoặc dùng default
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:4001/api";
 
 // Tạo axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000, // 30s timeout cho các query nặng
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -32,9 +33,9 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('[API] Request error:', error);
+    console.error("[API] Request error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor - xử lý lỗi
@@ -48,16 +49,17 @@ apiClient.interceptors.response.use(
       return Promise.reject(data || error);
     } else if (error.request) {
       // Không nhận được response
-      console.error('[API] No response from server');
+      console.error("[API] No response from server");
       return Promise.reject({
         success: false,
-        error: 'NETWORK_ERROR',
-        message: 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.',
+        error: "NETWORK_ERROR",
+        message:
+          "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.",
         statusCode: 0,
       });
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -74,7 +76,7 @@ export async function getScoreBySbd(query: ScoreQuery): Promise<ScoreResponse> {
  * GET /api/statistics
  */
 export async function getStatistics(): Promise<StatisticsResponse> {
-  const response = await apiClient.get<StatisticsResponse>('/statistics');
+  const response = await apiClient.get<StatisticsResponse>("/statistics");
   return response.data;
 }
 
@@ -82,9 +84,11 @@ export async function getStatistics(): Promise<StatisticsResponse> {
  * Lấy bảng xếp hạng
  * GET /api/rankings?limit=10&offset=0
  */
-export async function getRankings(query: RankingsQuery = {}): Promise<RankingsResponse> {
+export async function getRankings(
+  query: RankingsQuery = {},
+): Promise<RankingsResponse> {
   const { limit = 10, offset = 0 } = query;
-  const response = await apiClient.get<RankingsResponse>('/rankings', {
+  const response = await apiClient.get<RankingsResponse>("/rankings", {
     params: { limit, offset },
   });
   return response.data;

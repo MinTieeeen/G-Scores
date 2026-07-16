@@ -15,9 +15,11 @@ async function bootstrap() {
     'http://127.0.0.1:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    // Production URLs
+    'https://gscores-frontend-production.up.railway.app',
   ];
 
-  // Add production frontend URL if set
+  // Add additional production frontend URL if set via env
   if (process.env.FRONTEND_URL) {
     allowedOrigins.push(process.env.FRONTEND_URL);
   }

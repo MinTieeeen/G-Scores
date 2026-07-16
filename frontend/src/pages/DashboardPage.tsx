@@ -208,6 +208,9 @@ export default function DashboardPage() {
   const tongSoBaiThi = (statistics as StatisticsData | null)?.tong_so_bai_thi;
   const soMonThi = SUBJECTS.length;
 
+  // Chờ cả hai API load xong mới render — tránh flash dữ liệu rỗng
+  const isLoading = statsLoading || rankingsLoading;
+
   if (statsError) {
     return (
       <div className="dashboard-page">
@@ -225,6 +228,66 @@ export default function DashboardPage() {
             Thử lại
           </button>
         </div>
+      </div>
+    );
+  }
+
+  // Full-page loading skeleton — render khi bất kỳ API nào chưa xong
+  if (isLoading) {
+    return (
+      <div className="dashboard-page">
+        {/* Hero skeleton */}
+        <section className="dashboard-hero dashboard-hero--skeleton">
+          <div className="hero-content">
+            <div className="skeleton-line skeleton-line--lg" />
+            <div className="skeleton-line skeleton-line--sm" style={{ marginTop: '0.75rem' }} />
+            <div className="hero-stats" style={{ marginTop: '1.5rem' }}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="hero-stat">
+                  <div className="skeleton-circle" />
+                  <div style={{ flex: 1 }}>
+                    <div className="skeleton-line skeleton-line--sm" />
+                    <div className="skeleton-line skeleton-line--md" style={{ marginTop: '0.4rem' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Stats cards skeleton */}
+        <section className="dashboard-section">
+          <div className="section-header">
+            <div className="skeleton-line skeleton-line--md" style={{ width: '200px' }} />
+          </div>
+          <div className="loading-grid">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="stat-card skeleton">
+                <div className="skeleton-header"></div>
+                <div className="skeleton-body"></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Rankings skeleton */}
+        <section className="dashboard-section">
+          <div className="section-header">
+            <div className="skeleton-line skeleton-line--md" style={{ width: '180px' }} />
+          </div>
+          <div className="rankings-card">
+            <div className="rankings-header">
+              <div className="rankings-title">
+                <div className="skeleton-line skeleton-line--md" style={{ width: '220px' }} />
+                <div className="skeleton-line skeleton-line--sm" style={{ width: '100px', marginTop: '0.4rem' }} />
+              </div>
+            </div>
+            <div className="rankings-loading">
+              <div className="spinner"></div>
+              <span>Đang tải dữ liệu...</span>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
@@ -286,28 +349,17 @@ export default function DashboardPage() {
             Thống kê theo môn thi
           </h3>
         </div>
-        {statsLoading ? (
-          <div className="loading-grid">
-            {[...Array(9)].map((_, i) => (
-              <div key={i} className="stat-card skeleton">
-                <div className="skeleton-header"></div>
-                <div className="skeleton-body"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="stats-grid">
-            {SUBJECTS.map((subject) => (
-              <SubjectStatCard
-                key={subject.key}
-                subject={subject}
-                stats={statistics?.[subject.key] as SubjectStats | undefined}
-                formatNumber={formatNumber}
-                formatScore={formatScore}
-              />
-            ))}
-          </div>
-        )}
+        <div className="stats-grid">
+          {SUBJECTS.map((subject) => (
+            <SubjectStatCard
+              key={subject.key}
+              subject={subject}
+              stats={statistics?.[subject.key] as SubjectStats | undefined}
+              formatNumber={formatNumber}
+              formatScore={formatScore}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Charts */}
@@ -421,7 +473,7 @@ export default function DashboardPage() {
               </span>
             </div>
           </div>
-          <RankingsTable rankings={rankings} loading={rankingsLoading} />
+          <RankingsTable rankings={rankings} loading={false} />
         </div>
       </section>
     </div>

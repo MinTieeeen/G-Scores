@@ -647,3 +647,49 @@
     gap: 0.5rem;
   }
 }
+
+/* ==================== Skeleton Loading Utilities ==================== */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-line,
+.skeleton-circle {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-line--lg {
+  height: 2rem;
+  width: 60%;
+}
+
+.skeleton-line--md {
+  height: 1.25rem;
+  width: 100%;
+}
+
+.skeleton-line--sm {
+  height: 0.9rem;
+  width: 70%;
+}
+
+.skeleton-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Skeleton variant of hero — slightly muted */
+.dashboard-hero--skeleton {
+  opacity: 0.75;
+}
